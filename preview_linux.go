@@ -125,6 +125,23 @@ func previewDial(path string, t time.Time) {
 			}
 		}
 		fmt.Printf("k=%.2f  %dx%d  pełne %v  sekundy %v  różnice: %d bajtów, największa %d\n", k, d.W, d.H, full, part, diff, worst)
+		if k < 4 {
+			variants := [][2]bool{{true, false}, {false, true}, {true, true}}
+			strip := image.NewRGBA(image.Rect(0, 0, d.W*3, d.H))
+			for vi, v := range variants {
+				dv := NewDial(k)
+				dv.HideMin, dv.HideSec = v[0], v[1]
+				dv.Render(t, true)
+				dv.Render(t2, false)
+				for i := 0; i < dv.W*dv.H; i++ {
+					o := strip.PixOffset(vi*d.W+i%dv.W, i/dv.W)
+					strip.Pix[o], strip.Pix[o+1], strip.Pix[o+2], strip.Pix[o+3] = dv.Pix[i*4+2], dv.Pix[i*4+1], dv.Pix[i*4], 255
+				}
+			}
+			f, _ := os.Create(path + ".warianty.png")
+			png.Encode(f, strip)
+			f.Close()
+		}
 		if k > 4 {
 			img := image.NewRGBA(image.Rect(0, 0, d.W, d.H))
 			for i := 0; i < d.W*d.H; i++ {

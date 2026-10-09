@@ -246,7 +246,9 @@ var cfg = struct {
 	size    int  // 0 mały, 1 średni, 2 duży
 	reserve bool // rezerwuj miejsce (okna nie wchodzą pod pasek)
 	hover   bool // po najechaniu pokaż okrągły zegar w lupie
-}{up: true, size: 1, reserve: true, hover: true}
+	dialMin bool // w lupie: pokaż tarczę minut
+	dialSec bool // w lupie: pokaż tarczę sekund
+}{up: true, size: 1, reserve: true, hover: true, dialMin: true, dialSec: true}
 
 var (
 	hwnd           uintptr
@@ -310,6 +312,8 @@ func loadConfig() {
 	cfg.up = regGetDword(h, "FillUp", 1) != 0
 	cfg.reserve = regGetDword(h, "Reserve", 1) != 0
 	cfg.hover = regGetDword(h, "Hover", 1) != 0
+	cfg.dialMin = regGetDword(h, "DialMinutes", 1) != 0
+	cfg.dialSec = regGetDword(h, "DialSeconds", 1) != 0
 	if s := regGetDword(h, "Size", 1); s <= 2 {
 		cfg.size = int(s)
 	}
@@ -325,6 +329,8 @@ func saveConfig() {
 	regSetDword(h, "FillUp", b2u(cfg.up))
 	regSetDword(h, "Reserve", b2u(cfg.reserve))
 	regSetDword(h, "Hover", b2u(cfg.hover))
+	regSetDword(h, "DialMinutes", b2u(cfg.dialMin))
+	regSetDword(h, "DialSeconds", b2u(cfg.dialSec))
 	regSetDword(h, "Size", uint32(cfg.size))
 }
 
@@ -601,6 +607,7 @@ func showDial() {
 		rgn, _, _ := pCreateEllipticRgn.Call(0, 0, uintptr(dial.W+1), uintptr(dial.H+1))
 		pSetWindowRgn.Call(hDial, rgn, 0) // okno okrągłe; region przejmuje system
 	}
+	dial.HideMin, dial.HideSec = !cfg.dialMin, !cfg.dialSec
 	dial.Render(time.Now(), true)
 	moveDial()
 	dialVisible = true
@@ -647,6 +654,8 @@ const (
 	cmdReserve
 	cmdAutostart
 	cmdHover
+	cmdDialMin
+	cmdDialSec
 	cmdClose
 )
 
@@ -676,6 +685,9 @@ func showMenu() {
 	item(cmdLarge, "Rozmiar: duży", cfg.size == 2)
 	sep()
 	item(cmdHover, "Po najechaniu pokaż okrągły zegar w lupie", cfg.hover)
+	item(cmdDialMin, "W lupie: tarcza minut", cfg.dialMin)
+	item(cmdDialSec, "W lupie: tarcza sekund", cfg.dialSec)
+	sep()
 	item(cmdReserve, "Rezerwuj miejsce (okna nie wchodzą pod pasek)", cfg.reserve)
 	item(cmdAutostart, "Uruchamiaj razem z Windows", autostartEnabled())
 	sep()
@@ -708,6 +720,10 @@ func showMenu() {
 		cfg.reserve = !cfg.reserve
 	case cmdHover:
 		cfg.hover = !cfg.hover
+	case cmdDialMin:
+		cfg.dialMin = !cfg.dialMin
+	case cmdDialSec:
+		cfg.dialSec = !cfg.dialSec
 	case cmdAutostart:
 		setAutostart(!autostartEnabled())
 		return

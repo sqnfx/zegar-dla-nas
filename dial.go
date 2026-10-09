@@ -22,6 +22,8 @@ type Dial struct {
 	Pix    []byte // BGRA, wiersze od góry
 	static []byte // tarcze godzin i minut, odświeżane raz na sekundę
 	clip   [4]int // x0, y0, x1, y1: obszar, w którym wolno rysować
+
+	HideMin, HideSec bool // ukryte tarcze środkowe: minutowa i sekundowa
 }
 
 func NewDial(k float64) *Dial {
@@ -304,7 +306,11 @@ func (d *Dial) drawSeconds(sec float64) {
 
 // Render rysuje zegar dla chwili t. full=false odświeża tylko tarczę sekund
 // (pozostałe są brane z kopii zrobionej przy ostatnim pełnym rysowaniu).
+// Ukryta tarcza odsłania to, co leży pod nią: większą tarczę aż do środka.
 func (d *Dial) Render(t time.Time, full bool) {
+	if !full && d.HideSec {
+		return // bez tarczy sekund nic nie zmienia się częściej niż raz na sekundę
+	}
 	sec := float64(t.Second()) + float64(t.Nanosecond())/1e9
 	mins := float64(t.Minute()) + sec/60
 	hr := float64(t.Hour()%12) + mins/60
@@ -335,30 +341,39 @@ func (d *Dial) Render(t time.Time, full bool) {
 			d.label(roman[k], float64(k)*30-hr*30, 36.6, 4.5, 0.36, 0.62, colInkLight)
 		}
 
-		d.shadow(rMin)
-		d.disc(rMin, mins/5, &palM, colTrackM)
-		d.ticks(60, rMin, mins*6, colInkDark, func(i int) (float64, float64, float64) {
-			if i%5 == 0 {
-				return 3, 0.45, 1
+		// nieruchome znaczniki odczytu na jednej osi nad dwunastką; tylko dla widocznych tarcz
+		marks := [][3][2]float64{{{-2.2, -50.8}, {2.2, -50.8}, {0, -45.3}}}
+		if !d.HideMin {
+			d.shadow(rMin)
+			d.disc(rMin, mins/5, &palM, colTrackM)
+			d.ticks(60, rMin, mins*6, colInkDark, func(i int) (float64, float64, float64) {
+				if i%5 == 0 {
+					return 3, 0.45, 1
+				}
+				return 1.8, 0.25, 0.6
+			})
+			for k := 0; k < 12; k++ {
+				d.label(fives[k], float64(k)*30-mins*6, 23.3, 2.8, 0.2, 0.42, colInkDark)
 			}
-			return 1.8, 0.25, 0.6
-		})
-		for k := 0; k < 12; k++ {
-			d.label(fives[k], float64(k)*30-mins*6, 23.3, 2.8, 0.2, 0.42, colInkDark)
+			marks = append(marks, [3][2]float64{{-1.5, -33.3}, {1.5, -33.3}, {0, -30.3}})
 		}
-		d.shadow(rSec)
-
-		// nieruchome znaczniki odczytu na jednej osi nad dwunastką
-		for _, p := range [][3][2]float64{
-			{{-2.2, -50.8}, {2.2, -50.8}, {0, -45.3}},
-			{{-1.5, -33.3}, {1.5, -33.3}, {0, -30.3}},
-			{{-1.2, -17.7}, {1.2, -17.7}, {0, -15.3}},
-		} {
+		if !d.HideSec {
+			d.shadow(rSec)
+			marks = append(marks, [3][2]float64{{-1.2, -17.7}, {1.2, -17.7}, {0, -15.3}})
+		} else {
+			// sama oś, z ciemnym obrysem, żeby była widoczna na każdym kolorze
+			d.line(0, 0, 0, 0, 3.0, colEdge, 1)
+			d.line(0, 0, 0, 0, 2.2, colInkLight, 1)
+		}
+		for _, p := range marks {
 			d.tri(p, colEdge, 0.4*d.K)
 			d.tri(p, colMarker, 0)
 		}
 		d.lens()
 		copy(d.static, d.Pix)
+		if d.HideSec {
+			return
+		}
 	} else {
 		for y := sy0; y < sy1; y++ {
 			copy(d.Pix[(y*d.W+sx0)*4:(y*d.W+sx1)*4], d.static[(y*d.W+sx0)*4:(y*d.W+sx1)*4])
