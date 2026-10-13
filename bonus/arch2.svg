@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg1"
+   inkscape:export-filename="bitmapa.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
+   sodipodi:docname="arch2.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showguides="true"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="-23.157747"
+     inkscape:cy="544.29544"
+     inkscape:window-width="3440"
+     inkscape:window-height="1369"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <sodipodi:guide
+       position="30.132969,222.19377"
+       orientation="1,0"
+       id="guide3"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="29.99671,122.90773"
+       orientation="0,-1"
+       id="guide4"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="178.79929,222.67744"
+       orientation="1,0"
+       id="guide5"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="178.88314,222.01853"
+       orientation="0,-1"
+       id="guide6"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="29.827637,141.71852"
+       orientation="0,-1"
+       id="guide7"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Warstwa 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       d="m 30.224005,122.17394 v 33.03622 h 0.0217 c 0.08334,-16.4839 13.47023,-29.80807 29.960445,-29.808 16.090891,8e-5 29.832067,13.73322 29.939258,29.808 h 0.0708 v -33.03622 z"
+       style="fill:none;stroke:#000000;stroke-width:0.101656;stroke-linecap:square;stroke-linejoin:bevel"
+       id="path8" />
+  </g>
+</svg>
