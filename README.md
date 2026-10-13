@@ -1,4 +1,4 @@
-# zegar nie goń się
+# zegar nie goń się (AI/SI/KI etc.)
 
 pobierz oraz w środku:
 go build -trimpath -ldflags "-H windowsgui -s -w" -o ZegarPasek.exe .
